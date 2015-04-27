@@ -1,3 +1,4 @@
+#pragma setlocale ("Japanese_Japan.932")
 #include "gen-stdafx.h"
 
 typedef unsigned char u_char;
