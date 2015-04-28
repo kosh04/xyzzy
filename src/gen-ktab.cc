@@ -1,5 +1,3 @@
-#pragma execution_character_set("cp932")
-
 #include "gen-stdafx.h"
 
 typedef unsigned char u_char;
@@ -29,8 +27,7 @@ static const u_char f_20_7e[] = ("　！”＃＄％＆’（）＊＋，－．／"
                                  "ｐｑｒｓｔｕｖｗｘｙｚ｛｜｝￣");
 
 static const u_char fk_a1_df[] = ("。「」、・ヲァィゥェォャュョッ"
-                                  "ーアイウエオカキクケコサシスセソ"
-                                  "タチツテトナニヌネノハヒフヘホマ"
+                                  "ーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマ"
                                   "ミムメモヤユヨラリルレロワン゛゜");
 
 static const u_char fh_a1_df[] = ("。「」、・をぁぃぅぇぉゃゅょっ"
