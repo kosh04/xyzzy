@@ -14,10 +14,15 @@
                                    #'string-lessp))
                  (load-test-file test))))
            ;(test-changes)
-           (let ((*standard-output* *terminal-io*))
-             (format t "BEGIN all tests~%")
-             (run-all-tests)
-             (format t "END all tests~%"))
+           (with-open-file (log-output (merge-pathnames "../run-tests.log" dir)
+                                       :direction :output
+                                       :if-does-not-exist :create
+                                       :if-exists :supersede)
+             (let ((*standard-output* (make-broadcast-stream *terminal-io* log-output))
+                   (*error-output* (make-broadcast-stream *error-output* log-output)))
+               (format t "BEGIN all tests~%")
+               (run-all-tests)
+               (format t "END all tests~%")))
            (kill-xyzzy t))
           (t
            (push (merge-pathnames arg *command-line-args-base-directory*)

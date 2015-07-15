@@ -869,7 +869,7 @@ Returns list of failures."
       (:button3 (quit))))
   (setf *last-test-list* test-list
         *current-session* (make-session :remaining-tests test-list
-                                        :report-output *terminal-io*
+                                        :report-output *standard-output*
                                         :total-count (length test-list)))
   (continue-run-tests))
 
