@@ -837,11 +837,12 @@ Returns list of failures."
            (format out "Total ~D tests: ~:[~D~;~*All~] passed~@[~*, ~A failed~]~%"
                    total all-passed-p pass (not all-passed-p) fail)
            (format out "Total ~,1F seconds~%" (elapsed-seconds))
-           (let ((buffer (buffer-stream-buffer (ssn-report-output))))
-             (pop-to-buffer buffer)
-             (goto-char (point-max))
-             (unless (interactive-p)
-               (refresh-screen))))
+           (when (bufferp out)
+             (let ((buffer (buffer-stream-buffer out)))
+               (pop-to-buffer buffer)
+               (goto-char (point-max))
+               (unless (interactive-p)
+                 (refresh-screen)))))
          (while (stop-timer 'continue-run-tests))
          (null (setf *current-session* nil))
          :finish)))
@@ -868,6 +869,7 @@ Returns list of failures."
       (:button3 (quit))))
   (setf *last-test-list* test-list
         *current-session* (make-session :remaining-tests test-list
+                                        :report-output *terminal-io*
                                         :total-count (length test-list)))
   (continue-run-tests))
 

@@ -923,10 +923,63 @@ init_app (HINSTANCE hinst, int passed_cmdshow, int &ole_initialized)
   return 1;
 }
 
+static const WORD MAX_CONSOLE_LINES = 500;
+
+#define DEBUG_CONSOLE
+
+static void RedirectIOToConsole()
+{
+#if 1
+  AllocConsole();
+  freopen("CONIN$", "r+t", stdin);
+  freopen("CONOUT$", "w+t", stdout);
+  freopen("CONOUT$", "w+t", stderr);
+#else
+  int hConHandle;
+  long lStdHandle;
+  CONSOLE_SCREEN_BUFFER_INFO coninfo;
+  FILE *fp;
+
+  AllocConsole();
+
+  GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+  coninfo.dwSize.Y = MAX_CONSOLE_LINES;
+  SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+
+  // redirect unbufferd STDIN to the console
+  lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
+  hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+  fp = _fdopen(hConHandle, "r");
+  *stdin = *fp;
+  setvbuf(stdin, NULL, _IONBF, 0);
+
+  // redirect unbufferd STDOUT to the console
+  lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+  hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+  fp = _fdopen(hConHandle, "w");
+  *stdout = *fp;
+  setvbuf(stdout, NULL, _IONBF, 0);
+
+  // redirect unbufferd STDERR to the console
+  lStdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
+  hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+  fp = _fdopen(hConHandle, "w");
+  *stderr = *fp;
+  setvbuf(stdin, NULL, _IONBF, 0);
+#endif
+
+  return;
+}
+
 int PASCAL
 WinMain (HINSTANCE hinst, HINSTANCE, LPSTR, int cmdshow)
 {
   int ole_initialized = 0;
+
+#ifdef DEBUG_CONSOLE
+  RedirectIOToConsole();
+#endif
+
   if (init_app (hinst, cmdshow, ole_initialized))
     {
       xyzzy_instance xi (app.toplev);
